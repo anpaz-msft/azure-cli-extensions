@@ -47,7 +47,7 @@ class QuantumClientConfiguration(AzureConfiguration):
         if workspace_name is None:
             raise ValueError("Parameter 'workspace_name' must not be None.")
         if not base_url:
-            base_url = 'https://management.azure.com'
+            base_url = 'https://app-jobscheduler-prod.azurewebsites.net'
 
         super(QuantumClientConfiguration, self).__init__(base_url)
 
