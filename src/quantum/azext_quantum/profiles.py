@@ -6,4 +6,5 @@
 from azure.cli.core.profiles import CustomResourceType
 
 
-QUANTUM_WORKSPACE = CustomResourceType('azext_quantum.vendored_sdks.azure_mgmt_quantum', 'QuantumManagementClient')
+QUANTUM_DATA = CustomResourceType('azext_quantum.vendored_sdks.azure_quantum', 'QuantumClient')
+QUANTUM_MGMT = CustomResourceType('azext_quantum.vendored_sdks.azure_mgmt_quantum', 'QuantumManagementClient')
