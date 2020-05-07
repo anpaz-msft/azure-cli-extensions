@@ -19,7 +19,7 @@ class ProviderDescriptionProperties(ProviderProperties):
     :type description: str
     :param default_endpoint: Provider's default endpoint.
     :type default_endpoint: str
-    :param aad: Azure Acitve Directory info.
+    :param aad: Azure Active Directory info.
     :type aad: ~quantum.models.ProviderPropertiesAad
     :param managed_application: Provider's Managed-Application info
     :type managed_application:

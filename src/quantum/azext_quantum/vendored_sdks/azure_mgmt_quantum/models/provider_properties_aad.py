@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ProviderPropertiesAad(Model):
-    """Azure Acitve Directory info.
+    """Azure Active Directory info.
 
     :param application_id: Provider's application id.
     :type application_id: str
