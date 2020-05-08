@@ -10,3 +10,9 @@ def list(cmd, resource_group_name=None, workspace_name=None):
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
     return client.list()
+
+    
+def show(cmd, job_id, resource_group_name=None, workspace_name=None):
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
+    return client.get(job_id)
