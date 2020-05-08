@@ -15,7 +15,7 @@ def load_command_table(self, _):
 
     with self.command_group('quantum workspace', workspace_ops) as w:
         w.command('list', 'list')
-        # w.command('show', 'show')
+        w.command('show', 'show')
         # w.command('set', 'set')
         # w.command('get', 'get')
         # w.show_command('show', 'get')

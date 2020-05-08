@@ -10,8 +10,8 @@ def list(cmd, resource_group_name=None, tag=None, location=None):
     from azure.cli.command_modules.resource.custom import list_resources
     return list_resources(cmd, resource_group_name=resource_group_name, resource_type="Microsoft.Quantum/Workspaces", tag=tag, location=location)
 
-def show(cmd):
-    subscription = get_subscription_id(cmd.cli_ctx)
-    _resource_client_factory
-    print(subscription)
+def show(cmd, resource_group_name=None, name=None):
+    client = cf_workspaces(cmd.cli_ctx)
+    ws = client.get(resource_group_name, name)    
+    return ws
     
