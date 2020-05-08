@@ -13,13 +13,7 @@ from .profiles import QUANTUM_DATA, QUANTUM_MGMT
 class QuantumCommandsLoader(AzCommandsLoader):
 
     def __init__(self, cli_ctx=None):
-        from azure.cli.core.commands import CliCommandType
-        from azext_quantum._client_factory import cf_quantum_mgmt
-        quantum_custom = CliCommandType(
-            operations_tmpl='azext_quantum.custom#{}',
-            client_factory=cf_quantum_mgmt)
-        super(QuantumCommandsLoader, self).__init__(cli_ctx=cli_ctx,
-                                                  custom_command_type=quantum_custom)
+        super(QuantumCommandsLoader, self).__init__(cli_ctx=cli_ctx)
 
     def load_command_table(self, args):
         from azext_quantum.commands import load_command_table

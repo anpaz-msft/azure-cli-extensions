@@ -17,9 +17,9 @@ helps['quantum create'] = """
     short-summary: Create a Quantum.
 """
 
-helps['quantum list'] = """
+helps['quantum jobs list'] = """
     type: command
-    short-summary: List Quantums.
+    short-summary: List the jobs of the current workspace.
 """
 
 # helps['quantum delete'] = """
