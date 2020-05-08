@@ -3,9 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from collections import OrderedDict
+
 # pylint: disable=line-too-long
 from azure.cli.core.commands import CliCommandType
 from azext_quantum._client_factory import cf_offerings
+
 from .operations.workspace import WorkspaceInfo
 
 def validate_workspace_info(cmd, namespace):
@@ -20,15 +23,28 @@ def validate_workspace_info(cmd, namespace):
     if not ws.name:
         raise ValueError("Missing workspace name argument")
 
+def transform_job(result):
+    result = OrderedDict([
+        ('Id', result['id']),
+        ('State', result['status']),
+        ('Target', result['target']),
+        ('Submission time', result['creationTime']),
+        ('Completion time', result['endExecutionTime'])
+    ])
+    return result
+
+def transform_jobs(results):
+    return [transform_job(job) for job in results]
+
 def load_command_table(self, _):
 
     workspace_ops = CliCommandType(operations_tmpl='azext_quantum.operations.workspace#{}')
+    job_ops = CliCommandType(operations_tmpl='azext_quantum.operations.job#{}')
     offerings_ops = CliCommandType(
         operations_tmpl='azext_quantum.vendored_sdks.azure_mgmt_quantum.operations.offerings_operations#OfferingsOperations.{}',
         client_factory=cf_offerings
-        )
+    )
     # target_ops = CliCommandType(operations_tmpl='azext_quantum.operations.target#{}')
-    # job_ops = CliCommandType(operations_tmpl='azext_quantum.operations.job#{}')
 
     with self.command_group('quantum workspace', workspace_ops) as w:
         w.command('list', 'list')
@@ -45,9 +61,9 @@ def load_command_table(self, _):
     #     t.command('show', 'get')
     #     t.command('add', 'add')
 
-    # with self.command_group('quantum jobs', job_ops) as j:
+    with self.command_group('quantum job', job_ops) as j:
+        j.show_command('list', 'list', validator=validate_workspace_info, table_transformer=transform_jobs)
     #     #g.custom_command('create', 'create_quantum')
-    #     #j.show_command('list', 'list')
     #     j.command('list', 'list')
     #     #j.show_command('show', 'get')
     #     # g.generic_update_command('update', setter_name='update', custom_func_name='update_quantum')

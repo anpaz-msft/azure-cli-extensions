@@ -4,7 +4,9 @@
 # --------------------------------------------------------------------------------------------
 
 from .._client_factory import cf_jobs
+from .workspace import WorkspaceInfo
 
-def list(cmd, subscription_id=None, resource_group_name=None, workspace_name=None):
-    client = cf_jobs(cmd.cli_ctx, subscription_id, resource_group_name, workspace_name)
+def list(cmd, resource_group_name=None, workspace_name=None):
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
     return client.list()
