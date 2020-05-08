@@ -6,6 +6,19 @@
 # pylint: disable=line-too-long
 from azure.cli.core.commands import CliCommandType
 from azext_quantum._client_factory import cf_offerings
+from .operations.workspace import WorkspaceInfo
+
+def validate_workspace_info(cmd, namespace):
+    group = getattr(namespace, 'resource_group_name', None)
+    name = getattr(namespace, 'name', None)
+    ws = WorkspaceInfo(cmd, group, name)
+
+    if not ws.subscription:
+        raise ValueError("Missing subscription argument")
+    if not ws.resource_group:
+        raise ValueError("Missing resource-group argument")
+    if not ws.name:
+        raise ValueError("Missing workspace name argument")
 
 def load_command_table(self, _):
 
@@ -19,8 +32,8 @@ def load_command_table(self, _):
 
     with self.command_group('quantum workspace', workspace_ops) as w:
         w.command('list', 'list')
-        w.command('show', 'show')   ## TODO: argument list/help
-        # w.command('set', 'set')
+        w.command('show', 'show', validator=validate_workspace_info)   ## TODO: argument list/help
+        w.command('set', 'set', validator=validate_workspace_info)
         # w.command('get', 'get')
         # w.show_command('show', 'get')
         # w.custom_command('set', 'get')
