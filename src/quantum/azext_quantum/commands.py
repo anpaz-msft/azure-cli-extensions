@@ -64,6 +64,7 @@ def load_command_table(self, _):
     with self.command_group('quantum job', job_ops) as j:
         j.command('list', 'list', validator=validate_workspace_info, table_transformer=transform_jobs)
         j.command('show', 'show', validator=validate_workspace_info, table_transformer=transform_job)
+        j.command('submit', 'submit', validator=validate_workspace_info, table_transformer=transform_job)
     #     #g.custom_command('create', 'create_quantum')
     #     j.command('list', 'list')
     #     #j.show_command('show', 'get')
