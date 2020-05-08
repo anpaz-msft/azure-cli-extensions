@@ -40,6 +40,7 @@ def load_command_table(self, _):
 
     workspace_ops = CliCommandType(operations_tmpl='azext_quantum.operations.workspace#{}')
     job_ops = CliCommandType(operations_tmpl='azext_quantum.operations.job#{}')
+    
     offerings_ops = CliCommandType(
         operations_tmpl='azext_quantum.vendored_sdks.azure_mgmt_quantum.operations.offerings_operations#OfferingsOperations.{}',
         client_factory=cf_offerings
@@ -52,8 +53,8 @@ def load_command_table(self, _):
         w.command('set', 'set', validator=validate_workspace_info)
         w.command('clear', 'clear')
 
-    with self.command_group('quantum offers', offerings_ops) as w:
-        w.command('list', 'list')   ## TODO: argument list/help
+    # with self.command_group('quantum offers', offerings_ops) as w:
+    #     w.command('list', 'list')   ## TODO: argument list/help
 
     # with self.command_group('quantum target', target_ops) as t:
     #     t.command('list', 'list_quantum')
@@ -65,11 +66,7 @@ def load_command_table(self, _):
         j.command('list', 'list', validator=validate_workspace_info, table_transformer=transform_jobs)
         j.command('show', 'show', validator=validate_workspace_info, table_transformer=transform_job)
         j.command('submit', 'submit', validator=validate_workspace_info, table_transformer=transform_job)
-        j.command('output', 'output', validator=validate_workspace_info, table_transformer=transform_job)
-    #     #g.custom_command('create', 'create_quantum')
-    #     j.command('list', 'list')
-    #     #j.show_command('show', 'get')
-    #     # g.generic_update_command('update', setter_name='update', custom_func_name='update_quantum')
+        j.command('output', 'output', validator=validate_workspace_info)
 
 
     with self.command_group('quantum', is_preview=True):
