@@ -4,13 +4,8 @@
 # --------------------------------------------------------------------------------------------
 
 from .._client_factory import cf_workspaces
-from azure.cli.core.commands.client_factory import get_subscription_id
-
-import os
-from pathlib import Path
 
 class WorkspaceInfo(object):
-
     def __init__(self, cmd, resource_group_name=None, name=None):
         from azure.cli.core.commands.client_factory import get_subscription_id
 
@@ -23,11 +18,15 @@ class WorkspaceInfo(object):
             value = cmd.cli_ctx.config.get(cmd.cli_ctx.config.defaults_section_name, key, None)
             if not value is None:
                 return value
-            
+
         self.subscription = get_subscription_id(cmd.cli_ctx)
         self.resource_group = select_value('group', resource_group_name)
         self.name = select_value('workspace', name)
 
+    def clear(self):
+        self.subscription = ''
+        self.resource_group = ''
+        self.name = ''
 
     def save(self, cmd):
         from azure.cli.core.util import ConfiguredDefaultSetter
@@ -53,3 +52,9 @@ def set(cmd, resource_group_name=None, name=None):
     ws = client.get(info.resource_group, info.name)
     if ws:
         info.save(cmd)
+
+def clear(cmd):
+    info = WorkspaceInfo(cmd)
+    info.clear()
+    info.save(cmd)
+    return

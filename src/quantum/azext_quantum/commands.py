@@ -34,9 +34,7 @@ def load_command_table(self, _):
         w.command('list', 'list')
         w.command('show', 'show', validator=validate_workspace_info)   ## TODO: argument list/help
         w.command('set', 'set', validator=validate_workspace_info)
-        # w.command('get', 'get')
-        # w.show_command('show', 'get')
-        # w.custom_command('set', 'get')
+        w.command('clear', 'clear')
 
     with self.command_group('quantum offers', offerings_ops) as w:
         w.command('list', 'list')   ## TODO: argument list/help
