@@ -17,11 +17,17 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
     client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
     return client.get(job_id)
 
-    
+
 def submit(cmd, resource_group_name=None, workspace_name=None, build=False):
     WorkspaceInfo(cmd, resource_group_name, workspace_name)
     import subprocess
-    args = ["dotnet", "run", "" if build else "--no-build"]
-    print("args:", args)
+    args = ["dotnet", "run"] , "" if build else ["dotnet", "run", "--no-build"]
+    subprocess.run(args)
+    return
+
+def output(cmd, job_id, resource_group_name=None, workspace_name=None, build=False):
+    WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    import subprocess
+    args = ["dotnet", "run", job_id] if build else ["dotnet", "run", "--no-build", "--", job_id]
     subprocess.run(args)
     return
