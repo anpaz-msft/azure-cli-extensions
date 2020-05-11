@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .._client_factory import cf_jobs
+from .._client_factory import cf_jobs, _get_data_credentials
 from .workspace import WorkspaceInfo
+from .target import TargetInfo
 
 def list(cmd, resource_group_name=None, workspace_name=None):
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
@@ -18,12 +19,66 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
     return client.get(job_id)
 
 
-def submit(cmd, resource_group_name=None, workspace_name=None, build=False):
-    WorkspaceInfo(cmd, resource_group_name, workspace_name)
+def submit(cmd, resource_group_name=None, workspace_name=None, target_id=None, build=False, *kwargs):
+    import os
+
+    def is_env(name):
+        return 'AZURE_QUANTUM_ENV' in os.environ and os.environ['AZURE_QUANTUM_ENV'] == name
+
+    def base_url():
+        if 'AZURE_QUANTUM_BASEURL' in os.environ:
+            return os.environ['AZURE_QUANTUM_BASEURL']
+        if is_env('canary'):
+            return "https://app-jobs-canarysouthcentralus.azurewebsites.net/"
+
+        return "https://app-jobscheduler-prod.azurewebsites.net/"
+
+    ws = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    target = TargetInfo(cmd, target_id)
+    token = _get_data_credentials(cmd.cli_ctx, ws.subscription).get_token().token
+
+    args = ["dotnet", "run"]
+    if not build:
+        args.append("--no-build")
+
+    args.append("--")
+    args.append("submit")
+
+    args.append("--subscription")
+    args.append(ws.subscription)
+
+    args.append("--resource-group")
+    args.append(ws.resource_group)
+
+    args.append("--workspace")
+    args.append(ws.name)
+
+    args.append("--target")
+    args.append(target.target_id)
+
+    args.append("--output")
+    args.append("Id")
+
+    if not ('AZURE_QUANTUM_STORAGE' in os.environ):
+        raise ValueError(f"Please set the AZURE_QUANTUM_STORAGE environment variable with an Azure Storage's connection string")
+
+    args.append("--storage")
+    args.append(os.environ['AZURE_QUANTUM_STORAGE'])
+
+    args.append("--aad-token")
+    args.append(token)
+
+    args.append("--base-uri")
+    args.append(base_url())
+
     import subprocess
-    args = ["dotnet", "run"] if build else ["dotnet", "run", "--no-build"]
-    subprocess.run(args)
-    return
+    result = subprocess.run(args, stdout=subprocess.PIPE, check=False)
+
+    if (result.returncode == 0):
+        job_id = result.stdout    
+        return { 'job_id': job_id }
+
+    raise ValueError("Failed to submit job.")
 
 def output(cmd, job_id, resource_group_name=None, workspace_name=None):
     import io
