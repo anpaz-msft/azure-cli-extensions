@@ -6,7 +6,7 @@
 from .._client_factory import cf_workspaces
 
 class WorkspaceInfo(object):
-    def __init__(self, cmd, resource_group_name=None, name=None):
+    def __init__(self, cmd, resource_group_name=None, workspace_name=None):
         from azure.cli.core.commands.client_factory import get_subscription_id
 
         def select_value(key, value):
@@ -21,7 +21,7 @@ class WorkspaceInfo(object):
 
         self.subscription = get_subscription_id(cmd.cli_ctx)
         self.resource_group = select_value('group', resource_group_name)
-        self.name = select_value('workspace', name)
+        self.name = select_value('workspace', workspace_name)
 
     def clear(self):
         self.subscription = ''
@@ -40,15 +40,15 @@ def list(cmd, resource_group_name=None, tag=None, location=None):
     from azure.cli.command_modules.resource.custom import list_resources
     return list_resources(cmd, resource_group_name=resource_group_name, resource_type="Microsoft.Quantum/Workspaces", tag=tag, location=location)
 
-def show(cmd, resource_group_name=None, name=None):
+def show(cmd, resource_group_name=None, workspace_name=None):
     client = cf_workspaces(cmd.cli_ctx)
-    info = WorkspaceInfo(cmd, resource_group_name, name)
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     ws = client.get(info.resource_group, info.name)
     return ws
 
-def set(cmd, resource_group_name=None, name=None):
+def set(cmd, resource_group_name=None, workspace_name=None):
     client = cf_workspaces(cmd.cli_ctx)
-    info = WorkspaceInfo(cmd, resource_group_name, name)
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     ws = client.get(info.resource_group, info.name)
     if ws:
         info.save(cmd)

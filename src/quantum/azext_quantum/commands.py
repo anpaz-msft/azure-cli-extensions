@@ -10,10 +10,11 @@ from azure.cli.core.commands import CliCommandType
 from azext_quantum._client_factory import cf_offerings
 
 from .operations.workspace import WorkspaceInfo
+from .operations.target import TargetInfo
 
 def validate_workspace_info(cmd, namespace):
     group = getattr(namespace, 'resource_group_name', None)
-    name = getattr(namespace, 'name', None)
+    name = getattr(namespace, 'workspace_name', None)
     ws = WorkspaceInfo(cmd, group, name)
 
     if not ws.subscription:
@@ -22,6 +23,20 @@ def validate_workspace_info(cmd, namespace):
         raise ValueError("Missing resource-group argument")
     if not ws.name:
         raise ValueError("Missing workspace name argument")
+
+def validate_target_info(cmd, namespace):
+    target_id = getattr(namespace, 'target_id', None)
+    target = TargetInfo(cmd, target_id)
+
+    if not target.target_id:
+        raise ValueError("Missing target-id argument")
+
+
+
+def validate_workspace_and_target_info(cmd, namespace):
+    validate_workspace_info(cmd, namespace)
+    validate_target_info(cmd, namespace)
+
 
 def transform_job(result):
     result = OrderedDict([
@@ -40,12 +55,12 @@ def load_command_table(self, _):
 
     workspace_ops = CliCommandType(operations_tmpl='azext_quantum.operations.workspace#{}')
     job_ops = CliCommandType(operations_tmpl='azext_quantum.operations.job#{}')
+    target_ops = CliCommandType(operations_tmpl='azext_quantum.operations.target#{}')
     
     offerings_ops = CliCommandType(
         operations_tmpl='azext_quantum.vendored_sdks.azure_mgmt_quantum.operations.offerings_operations#OfferingsOperations.{}',
         client_factory=cf_offerings
     )
-    # target_ops = CliCommandType(operations_tmpl='azext_quantum.operations.target#{}')
 
     with self.command_group('quantum workspace', workspace_ops) as w:
         w.command('list', 'list')
@@ -56,16 +71,17 @@ def load_command_table(self, _):
     # with self.command_group('quantum offers', offerings_ops) as w:
     #     w.command('list', 'list')   ## TODO: argument list/help
 
-    # with self.command_group('quantum target', target_ops) as t:
-    #     t.command('list', 'list_quantum')
-    #     t.command('set', 'set')
-    #     t.command('show', 'get')
-    #     t.command('add', 'add')
+    with self.command_group('quantum target', target_ops) as w:
+        # w.command('list', 'list')
+        w.command('show', 'show', validator=validate_target_info)
+        w.command('set', 'set', validator=validate_target_info)
+        w.command('clear', 'clear')
+
 
     with self.command_group('quantum job', job_ops) as j:
         j.command('list', 'list', validator=validate_workspace_info, table_transformer=transform_jobs)
         j.command('show', 'show', validator=validate_workspace_info, table_transformer=transform_job)
-        j.command('submit', 'submit', validator=validate_workspace_info, table_transformer=transform_job)
+        j.command('submit', 'submit', validator=validate_workspace_and_target_info, table_transformer=transform_job)
         j.command('output', 'output', validator=validate_workspace_info)
 
 
