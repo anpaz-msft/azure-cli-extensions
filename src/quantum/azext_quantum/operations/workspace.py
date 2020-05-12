@@ -52,6 +52,7 @@ def set(cmd, resource_group_name=None, workspace_name=None):
     ws = client.get(info.resource_group, info.name)
     if ws:
         info.save(cmd)
+        return ws
 
 def clear(cmd):
     info = WorkspaceInfo(cmd)

@@ -64,11 +64,15 @@ def transform_output(results):
         return OrderedDict([
             ('Result', key),
             ('Frequency', f"{value:10.8f}"),
-            ('', f"| {barra:<22} |"),
+            ('', f"\u2590{barra:<22} |"),
         ])
-    
-    histogram = results['Histogram'] if 'Histogram' in results else results['histogram']
-    return [one(key) for key in histogram]
+
+    histogram = results['Histogram'] if 'Histogram' in results else None
+    histogram = results['histogram'] if 'histogram' in results else histogram
+    if histogram:
+        return [one(key) for key in histogram]
+    else:
+        return results
 
 
 def load_command_table(self, _):
@@ -76,11 +80,11 @@ def load_command_table(self, _):
     workspace_ops = CliCommandType(operations_tmpl='azext_quantum.operations.workspace#{}')
     job_ops = CliCommandType(operations_tmpl='azext_quantum.operations.job#{}')
     target_ops = CliCommandType(operations_tmpl='azext_quantum.operations.target#{}')
-    
-    offerings_ops = CliCommandType(
-        operations_tmpl='azext_quantum.vendored_sdks.azure_mgmt_quantum.operations.offerings_operations#OfferingsOperations.{}',
-        client_factory=cf_offerings
-    )
+
+    # offerings_ops = CliCommandType(
+    #     operations_tmpl='azext_quantum.vendored_sdks.azure_mgmt_quantum.operations.offerings_operations#OfferingsOperations.{}',
+    #     client_factory=cf_offerings
+    # )
 
     with self.command_group('quantum workspace', workspace_ops) as w:
         w.command('list', 'list')
@@ -102,7 +106,9 @@ def load_command_table(self, _):
         j.command('list', 'list', validator=validate_workspace_info, table_transformer=transform_jobs)
         j.command('show', 'show', validator=validate_workspace_info, table_transformer=transform_job)
         j.command('submit', 'submit', validator=validate_workspace_and_target_info)
+        j.command('wait', 'wait', validator=validate_workspace_info, table_transformer=transform_job)
         j.command('output', 'output', validator=validate_workspace_info, table_transformer=transform_output)
+        j.command('execute', 'execute', validator=validate_workspace_and_target_info, table_transformer=transform_output)
 
 
     with self.command_group('quantum', is_preview=True):

@@ -39,6 +39,7 @@ def set(cmd, target_id=None):
     info = TargetInfo(cmd, target_id)
     if info:
         info.save(cmd)
+    return info
 
 def clear(cmd):
     info = TargetInfo(cmd)

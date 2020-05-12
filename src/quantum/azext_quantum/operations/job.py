@@ -7,6 +7,10 @@ from .._client_factory import cf_jobs, _get_data_credentials, base_url
 from .workspace import WorkspaceInfo
 from .target import TargetInfo
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 def list(cmd, resource_group_name=None, workspace_name=None):
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
@@ -19,7 +23,7 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
     return client.get(job_id)
 
 
-def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, build=False):
+def submit(cmd, resource_group_name=None, workspace_name=None, target_id=None, build=False):
     import os
 
     ws = WorkspaceInfo(cmd, resource_group_name, workspace_name)
@@ -63,7 +67,7 @@ def submit(cmd, program_args, resource_group_name=None, workspace_name=None, tar
     result = subprocess.run(args, stdout=subprocess.PIPE, check=False)
 
     if (result.returncode == 0):
-        job_id = result.stdout    
+        job_id = result.stdout.decode('ascii').strip()  
         return { 'job_id': job_id }
 
     raise ValueError("Failed to submit job.")
@@ -107,4 +111,49 @@ def output(cmd, job_id, resource_group_name=None, workspace_name=None):
         data = json.load(json_file)
         return data
 
+
+def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wait_secs=5):
+    """Keeps refreshing the Job's details until it reaches a finished status.
+    """
+    import time
+
+    def has_completed(job):
+        return (
+            job.status == "Succeeded" or
+            job.status == "Failed" or
+            job.status == "Cancelled"
+        )
+
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
+
+    # TODO: LROPoller...
+    w = False
+    poll_wait = 0.2
+    job = client.get(job_id)
+
+    while not has_completed(job):        
+        print('.', end='', flush=True)
+        w = True
+        time.sleep(poll_wait)
+        job = client.get(job_id)
+        poll_wait = max_poll_wait_secs if poll_wait >= max_poll_wait_secs else poll_wait * 1.5
+
+    if w:
+        print("")
+
+    return job
+
+def execute(cmd, resource_group_name=None, workspace_name=None, target_id=None, build=False):
+    job = submit(cmd, resource_group_name, workspace_name, target_id, build)
+    print("job id:", job['job_id'])
+    logger.debug(job)
+
+    job = wait(cmd, job['job_id'], resource_group_name, workspace_name)
+    logger.debug(job)
+
+    if not job.status == "Succeeded":
+        return job
+
+    return output(cmd, job.id, resource_group_name, workspace_name)
 
