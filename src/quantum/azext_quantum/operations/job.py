@@ -48,9 +48,6 @@ def submit(cmd, program_args, resource_group_name=None, workspace_name=None, tar
     args.append("--output")
     args.append("Id")
 
-    if not ('AZURE_QUANTUM_STORAGE' in os.environ):
-        raise ValueError(f"Please set the AZURE_QUANTUM_STORAGE environment variable with an Azure Storage's connection string")
-
     args.append("--storage")
     args.append(os.environ['AZURE_QUANTUM_STORAGE'])
 
