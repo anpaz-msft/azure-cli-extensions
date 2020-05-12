@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .._client_factory import cf_jobs, _get_data_credentials
+from .._client_factory import cf_jobs, _get_data_credentials, base_url
 from .workspace import WorkspaceInfo
 from .target import TargetInfo
 
@@ -21,17 +21,6 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
 
 def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, build=False):
     import os
-
-    def is_env(name):
-        return 'AZURE_QUANTUM_ENV' in os.environ and os.environ['AZURE_QUANTUM_ENV'] == name
-
-    def base_url():
-        if 'AZURE_QUANTUM_BASEURL' in os.environ:
-            return os.environ['AZURE_QUANTUM_BASEURL']
-        if is_env('canary'):
-            return "https://app-jobs-canarysouthcentralus.azurewebsites.net/"
-
-        return "https://app-jobscheduler-prod.azurewebsites.net/"
 
     ws = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     target = TargetInfo(cmd, target_id)
