@@ -6,20 +6,21 @@
 
 from knack.arguments import CLIArgumentType
 
-
 def load_arguments(self, _):
-
-    from azure.cli.core.commands.parameters import tags_type
-    from azure.cli.core.commands.validators import get_default_location_from_resource_group
-
     name_type = CLIArgumentType(options_list=['--name', '-n'], help='Name of the Quantum Workspace. You can configure the default workspace using `az quantum workspace set`.', id_part=None, required=False)
     workspace_name_type = CLIArgumentType(options_list=['--workspace-name', '-w'], help='Name of the Quantum Workspace. You can configure the default workspace using `az quantum workspace set`.', id_part=None, required=False)
+    program_args = CLIArgumentType(nargs='*', help='List of arguments expected by the Q# operation specified as --name=value after `--`.')
 
     with self.argument_context('quantum workspace') as c:
         c.argument('workspace_name', name_type)
 
     with self.argument_context('quantum job') as c:
         c.argument('workspace_name', workspace_name_type)
+        c.argument('job_id', options_list=['--job-id', '-id'], help='Job id.')
 
     with self.argument_context('quantum job submit') as c:
-        c.positional('program_args', nargs='*')
+        c.positional('program_args', program_args)
+
+    with self.argument_context('quantum execute') as c:
+        c.argument('workspace_name', workspace_name_type)
+        c.positional('program_args', program_args)

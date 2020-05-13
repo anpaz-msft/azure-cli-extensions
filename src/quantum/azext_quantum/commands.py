@@ -58,8 +58,7 @@ def transform_jobs(results):
 
 
 def transform_output(results):
-    def one(key):
-        value = results['histogram'][key]
+    def one(key, value):
         repeat = round(20*value)
         barra = "\u2588"*repeat
         return OrderedDict([
@@ -68,12 +67,24 @@ def transform_output(results):
             ('', f"\u2590{barra:<22} |"),
         ])
 
-    histogram = results['Histogram'] if 'Histogram' in results else None
-    histogram = results['histogram'] if 'histogram' in results else histogram
-    if histogram:
-        return [one(key) for key in histogram]
-    else:
-        return results
+    if 'Histogram' in results:
+        histogram = results['Histogram']
+        # The Histogram serialization is odd entries are key and even entries values
+        # Make sure we have even entries
+        if (len(histogram) % 2) == 0:
+            table = []
+            items = range(0, len(histogram), 2)
+            for i in items:
+                key = histogram[i]
+                value = histogram[i+1]
+                table.append(one(key, value))
+            return table
+
+    elif 'histogram' in results:
+        histogram = results['histogram']
+        return [one(key, histogram[key]) for key in histogram]
+
+    return results
 
 
 def load_command_table(self, _):

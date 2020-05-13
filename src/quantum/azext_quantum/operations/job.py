@@ -3,27 +3,40 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+# pylint: disable=import-outside-toplevel
+
+import logging
+
 from .._client_factory import cf_jobs, _get_data_credentials, base_url
 from .workspace import WorkspaceInfo
 from .target import TargetInfo
+from knack.util import CLIError
 
-import logging
 logger = logging.getLogger(__name__)
 
-
+# pylint: disable=redefined-builtin
 def list(cmd, resource_group_name=None, workspace_name=None):
+    """
+    Returns the list of jobs in a Quantum Workspace.
+    """
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
     return client.list()
 
 
 def show(cmd, job_id, resource_group_name=None, workspace_name=None):
+    """
+    Shows the job's status and details.
+    """
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
     return client.get(job_id)
 
 
-def submit(cmd, resource_group_name=None, workspace_name=None, target_id=None, build=False):
+def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, build=False):
+    """
+    Submits a Q# program for execution to Azure Quantum.
+    """
     import os
 
     ws = WorkspaceInfo(cmd, resource_group_name, workspace_name)
@@ -33,6 +46,10 @@ def submit(cmd, resource_group_name=None, workspace_name=None, target_id=None, b
     args = ["dotnet", "run"]
     if not build:
         args.append("--no-build")
+
+    if project:
+        args.append("--project")
+        args.append(project)
 
     args.append("--")
     args.append("submit")
@@ -63,19 +80,21 @@ def submit(cmd, resource_group_name=None, workspace_name=None, target_id=None, b
 
     args.extend(program_args)
 
+    logger.debug(args)
+
     import subprocess
     result = subprocess.run(args, stdout=subprocess.PIPE, check=False)
 
-    if (result.returncode == 0):
+    if result.returncode == 0:
         job_id = result.stdout.decode('ascii').strip()  
         return { 'job_id': job_id }
 
-    raise ValueError("Failed to submit job.")
+    raise CLIError("Failed to submit job.")
 
 def output(cmd, job_id, resource_group_name=None, workspace_name=None):
-    import io
     import tempfile
     import json
+    import os
     from azure.cli.command_modules.storage._client_factory import blob_data_service_factory
 
     def parse_url(url):
@@ -94,18 +113,22 @@ def output(cmd, job_id, resource_group_name=None, workspace_name=None):
             "sas_token": sas_token
         }
 
-    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
-    client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
-    job = client.get(job_id)
+    path = os.path.join(tempfile.gettempdir(), job_id)
+    if os.path.exists(path):
+        logger.debug(f"Using existing blob from {path}")
+    else:
+        logger.debug(f"Downloading job results blob into {path}")
 
-    if job.status != "Succeeded":
-        return f"Job status: {job.status}. Output only available if Succeeded."
+        info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+        client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
+        job = client.get(job_id)
 
-    args = parse_url(job.output_data_uri)
-    blob_service = blob_data_service_factory(cmd.cli_ctx, args)
+        if job.status != "Succeeded":
+            return f"Job status: {job.status}. Output only available if Succeeded."
 
-    path = tempfile.mktemp()
-    blob_service.get_blob_to_path(args['container'], args['blob'], path)
+        args = parse_url(job.output_data_uri)
+        blob_service = blob_data_service_factory(cmd.cli_ctx, args)
+        blob_service.get_blob_to_path(args['container'], args['blob'], path)
 
     with open(path) as json_file:
         data = json.load(json_file)
@@ -133,7 +156,7 @@ def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wa
     poll_wait = 0.2
     job = client.get(job_id)
 
-    while not has_completed(job):        
+    while not has_completed(job):
         print('.', end='', flush=True)
         w = True
         time.sleep(poll_wait)
@@ -145,9 +168,14 @@ def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wa
 
     return job
 
-def execute(cmd, resource_group_name=None, workspace_name=None, target_id=None, build=False):
-    job = submit(cmd, resource_group_name, workspace_name, target_id, build)
-    print("job id:", job['job_id'])
+def execute(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, build=False):
+    """
+    Executes a Q# project on Azure Quantum.
+
+    Submits a job, waits for completion and returns back a histogram with the results distribution.
+    """
+    job = submit(cmd, program_args, resource_group_name, workspace_name, target_id, project, build)
+    print("Job id:", job['job_id'])
     logger.debug(job)
 
     job = wait(cmd, job['job_id'], resource_group_name, workspace_name)
@@ -157,4 +185,3 @@ def execute(cmd, resource_group_name=None, workspace_name=None, target_id=None, 
         return job
 
     return output(cmd, job.id, resource_group_name, workspace_name)
-
