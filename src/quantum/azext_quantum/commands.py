@@ -38,7 +38,7 @@ def validate_workspace_and_target_info(cmd, namespace):
     validate_workspace_info(cmd, namespace)
     validate_target_info(cmd, namespace)
 
-    if not ('AZURE_QUANTUM_STORAGE' in os.environ):
+    if not 'AZURE_QUANTUM_STORAGE' in os.environ:
         raise ValueError(f"Please set the AZURE_QUANTUM_STORAGE environment variable with an Azure Storage's connection string.")
 
 
@@ -51,6 +51,7 @@ def transform_job(result):
         ('Completion time', result['endExecutionTime'])
     ])
     return result
+
 
 def transform_jobs(results):
     return [transform_job(job) for job in results]
@@ -108,8 +109,7 @@ def load_command_table(self, _):
         j.command('submit', 'submit', validator=validate_workspace_and_target_info)
         j.command('wait', 'wait', validator=validate_workspace_info, table_transformer=transform_job)
         j.command('output', 'output', validator=validate_workspace_info, table_transformer=transform_output)
-        j.command('execute', 'execute', validator=validate_workspace_and_target_info, table_transformer=transform_output)
 
 
-    with self.command_group('quantum', is_preview=True):
-        pass
+    with self.command_group('quantum', job_ops, is_preview=True) as q:
+        q.command('execute', 'execute', validator=validate_workspace_and_target_info, table_transformer=transform_output)

@@ -113,7 +113,8 @@ def output(cmd, job_id, resource_group_name=None, workspace_name=None):
 
 
 def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wait_secs=5):
-    """Keeps refreshing the Job's details until it reaches a finished status.
+    """
+    Place the CLI in a waiting state until the job finishes execution.
     """
     import time
 
