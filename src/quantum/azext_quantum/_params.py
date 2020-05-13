@@ -20,3 +20,6 @@ def load_arguments(self, _):
 
     with self.argument_context('quantum job') as c:
         c.argument('workspace_name', workspace_name_type)
+
+    with self.argument_context('quantum job submit') as c:
+        c.positional('program_args', nargs='*')

@@ -19,7 +19,7 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
     return client.get(job_id)
 
 
-def submit(cmd, resource_group_name=None, workspace_name=None, target_id=None, build=False, *kwargs):
+def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, build=False):
     import os
 
     def is_env(name):
@@ -70,6 +70,8 @@ def submit(cmd, resource_group_name=None, workspace_name=None, target_id=None, b
 
     args.append("--base-uri")
     args.append(base_url())
+
+    args.extend(program_args)
 
     import subprocess
     result = subprocess.run(args, stdout=subprocess.PIPE, check=False)
