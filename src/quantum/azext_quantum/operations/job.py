@@ -33,7 +33,7 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
     return client.get(job_id)
 
 
-def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, build=False):
+def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, no_build=False):
     """
     Submits a Q# program for execution to Azure Quantum.
     """
@@ -44,7 +44,7 @@ def submit(cmd, program_args, resource_group_name=None, workspace_name=None, tar
     token = _get_data_credentials(cmd.cli_ctx, ws.subscription).get_token().token
 
     args = ["dotnet", "run"]
-    if not build:
+    if no_build:
         args.append("--no-build")
 
     if project:
@@ -114,6 +114,7 @@ def output(cmd, job_id, resource_group_name=None, workspace_name=None):
         }
 
     path = os.path.join(tempfile.gettempdir(), job_id)
+
     if os.path.exists(path):
         logger.debug(f"Using existing blob from {path}")
     else:

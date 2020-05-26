@@ -9,12 +9,7 @@ from knack.help_files import helps  # pylint: disable=unused-import
 
 helps['quantum'] = """
     type: group
-    short-summary: Commands to manage Quantums.
-"""
-
-helps['quantum create'] = """
-    type: command
-    short-summary: Create a Quantum.
+    short-summary: Manage Quantum Workspaces and submit jobs to Azure Quantum Providers.
 """
 
 helps['quantum jobs list'] = """
