@@ -12,13 +12,21 @@
 try:
     from .rest_error_py3 import RestError, RestErrorException
     from .job_details_py3 import JobDetails
+    from .target_status_py3 import TargetStatus
+    from .provider_status_py3 import ProviderStatus
 except (SyntaxError, ImportError):
     from .rest_error import RestError, RestErrorException
     from .job_details import JobDetails
+    from .target_status import TargetStatus
+    from .provider_status import ProviderStatus
 from .job_details_paged import JobDetailsPaged
+from .provider_status_paged import ProviderStatusPaged
 
 __all__ = [
     'RestError', 'RestErrorException',
     'JobDetails',
+    'TargetStatus',
+    'ProviderStatus',
     'JobDetailsPaged',
+    'ProviderStatusPaged',
 ]
