@@ -3,19 +3,43 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-## TODO: REMOVE FILE
+# pylint: disable=line-too-long
 
-def example_name_or_id_validator(cmd, namespace):
-    # Example of a storage account name or ID validator.
-    # See: https://github.com/Azure/azure-cli/blob/dev/doc/authoring_command_modules/authoring_commands.md#supporting-name-or-id-parameters
-    from azure.cli.core.commands.client_factory import get_subscription_id
-    from msrestazure.tools import is_valid_resource_id, resource_id
-    if namespace.storage_account:
-        if not is_valid_resource_id(namespace.RESOURCE):
-            namespace.storage_account = resource_id(
-                subscription=get_subscription_id(cmd.cli_ctx),
-                resource_group=namespace.resource_group_name,
-                namespace='Microsoft.Storage',
-                type='storageAccounts',
-                name=namespace.storage_account
-            )
+import os
+
+from .operations.workspace import WorkspaceInfo
+from .operations.target import TargetInfo
+
+def validate_workspace_info(cmd, namespace):
+    ### Makes sure all parameters for a workspace are available ##
+    group = getattr(namespace, 'resource_group_name', None)
+    name = getattr(namespace, 'workspace_name', None)
+    ws = WorkspaceInfo(cmd, group, name)
+
+    if not ws.subscription:
+        raise ValueError("Missing subscription argument")
+    if not ws.resource_group:
+        raise ValueError("Missing resource-group argument")
+    if not ws.name:
+        raise ValueError("Missing workspace name argument")
+
+
+def validate_target_info(cmd, namespace):
+    ### Makes sure all parameters for a target are available ##
+    target_id = getattr(namespace, 'target_id', None)
+    target = TargetInfo(cmd, target_id)
+
+    if not target.target_id:
+        raise ValueError("Missing target-id argument")
+
+
+def validate_workspace_and_target_info(cmd, namespace):
+    ### Makes sure all parameters for both, a workspace and a target are available ##
+    validate_workspace_info(cmd, namespace)
+    validate_target_info(cmd, namespace)
+
+    # For the time being (Private Preview), we also need the AZURE_QUANTUM_STORAGE env variable populated
+    # with the Azure Storag'se connection string to use to upload the program.
+    if not 'AZURE_QUANTUM_STORAGE' in os.environ:
+        raise ValueError(f"Please set the AZURE_QUANTUM_STORAGE environment variable with an Azure Storage's connection string.")
+

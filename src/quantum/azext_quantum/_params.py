@@ -7,12 +7,11 @@
 from knack.arguments import CLIArgumentType
 
 def load_arguments(self, _):
-    name_type = CLIArgumentType(options_list=['--name', '-n'], help='Name of the Quantum Workspace. You can configure the default workspace using `az quantum workspace set`.', id_part=None, required=False)
     workspace_name_type = CLIArgumentType(options_list=['--workspace-name', '-w'], help='Name of the Quantum Workspace. You can configure the default workspace using `az quantum workspace set`.', id_part=None, required=False)
     program_args = CLIArgumentType(nargs='*', help='List of arguments expected by the Q# operation specified as --name=value after `--`.')
 
     with self.argument_context('quantum workspace') as c:
-        c.argument('workspace_name', name_type)
+        c.argument('workspace_name', workspace_name_type)
 
     with self.argument_context('quantum job') as c:
         c.argument('workspace_name', workspace_name_type)
