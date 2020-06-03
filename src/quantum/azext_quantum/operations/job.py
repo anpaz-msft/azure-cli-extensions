@@ -60,24 +60,9 @@ def build(cmd, target_id=None, project=None):
     raise CLIError("Failed to compile program.")
 
 
-def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, 
-    job_name=None, shots=None, no_build=False):
-    """
-    Submits a Q# program for execution to Azure Quantum.
-    """
+def _generate_submit_args(program_args, ws, target, token, project, job_name, shots):
+    """ Generates the list of arguments for calling submit on a Q# project """
     import os
-
-    # We first build and then call run.
-    # Can't call run directly because it fails to understand the 
-    # `ExecutionTarget` property when passed in the command line
-    if not no_build:
-        build(cmd, target_id=target_id, project=project)
-
-    logger.info("Project built successfully.")
-
-    ws = WorkspaceInfo(cmd, resource_group_name, workspace_name)
-    target = TargetInfo(cmd, target_id)
-    token = _get_data_credentials(cmd.cli_ctx, ws.subscription).get_token().token
 
     args = ["dotnet", "run", "--no-build"]
 
@@ -125,6 +110,28 @@ def submit(cmd, program_args, resource_group_name=None, workspace_name=None, tar
     logger.debug("Running  project with arguments:")
     logger.debug(args)
 
+    return args
+
+def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None,
+    job_name=None, shots=None, no_build=False):
+    """
+    Submits a Q# project for execution to Azure Quantum.
+    """
+
+    # We first build and then call run.
+    # Can't call run directly because it fails to understand the
+    # `ExecutionTarget` property when passed in the command line
+    if not no_build:
+        build(cmd, target_id=target_id, project=project)
+
+    logger.info("Project built successfully.")
+
+    ws = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    target = TargetInfo(cmd, target_id)
+    token = _get_data_credentials(cmd.cli_ctx, ws.subscription).get_token().token
+
+    args = _generate_submit_args(program_args, ws, target, token, project, job_name, shots)
+
     import subprocess
     result = subprocess.run(args, stdout=subprocess.PIPE, check=False)
 
@@ -134,27 +141,29 @@ def submit(cmd, program_args, resource_group_name=None, workspace_name=None, tar
 
     raise CLIError("Failed to submit job.")
 
+
+def _parse_blob_url(url):
+    from urllib.parse import urlparse
+    o = urlparse(url)
+
+    account_name = o.netloc.split('.')[0]
+    container = o.path.split('/')[-2]
+    blob = o.path.split('/')[-1]
+    sas_token = o.query
+
+    return {
+        "account_name": account_name,
+        "container": container,
+        "blob": blob,
+        "sas_token": sas_token
+    }
+
 def output(cmd, job_id, resource_group_name=None, workspace_name=None):
+    """ Returns back the results of a Q# execution """
     import tempfile
     import json
     import os
     from azure.cli.command_modules.storage._client_factory import blob_data_service_factory
-
-    def parse_url(url):
-        from urllib.parse import urlparse
-        o = urlparse(url)
-
-        account_name = o.netloc.split('.')[0]
-        container = o.path.split('/')[-2]
-        blob = o.path.split('/')[-1]
-        sas_token = o.query
-
-        return {
-            "account_name": account_name,
-            "container": container,
-            "blob": blob,
-            "sas_token": sas_token
-        }
 
     path = os.path.join(tempfile.gettempdir(), job_id)
 
@@ -170,7 +179,7 @@ def output(cmd, job_id, resource_group_name=None, workspace_name=None):
         if job.status != "Succeeded":
             return f"Job status: {job.status}. Output only available if Succeeded."
 
-        args = parse_url(job.output_data_uri)
+        args = _parse_blob_url(job.output_data_uri)
         blob_service = blob_data_service_factory(cmd.cli_ctx, args)
         blob_service.get_blob_to_path(args['container'], args['blob'], path)
 
@@ -212,17 +221,18 @@ def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wa
 
     return job
 
-def execute(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, build=False):
+def execute(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None,
+    job_name=None, shots=None, no_build=False):
     """
     Executes a Q# project on Azure Quantum.
 
     Submits a job, waits for completion and returns back a histogram with the results distribution.
     """
-    job = submit(cmd, program_args, resource_group_name, workspace_name, target_id, project, build)
-    print("Job id:", job['job_id'])
+    job = submit(cmd, program_args, resource_group_name, workspace_name, target_id, project, job_name, shots, no_build)
+    print("Job id:", job.id)
     logger.debug(job)
 
-    job = wait(cmd, job['job_id'], resource_group_name, workspace_name)
+    job = wait(cmd, job.id, resource_group_name, workspace_name)
     logger.debug(job)
 
     if not job.status == "Succeeded":

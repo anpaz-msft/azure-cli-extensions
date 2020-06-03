@@ -35,7 +35,6 @@ def transform_job(result):
     ])
     return result
 
-
 def transform_jobs(results):
     def creation(job):
         return job['creationTime']
@@ -79,19 +78,12 @@ def load_command_table(self, _):
     job_ops = CliCommandType(operations_tmpl='azext_quantum.operations.job#{}')
     target_ops = CliCommandType(operations_tmpl='azext_quantum.operations.target#{}')
 
-    # offerings_ops = CliCommandType(
-    #     operations_tmpl='azext_quantum.vendored_sdks.azure_mgmt_quantum.operations.offerings_operations#OfferingsOperations.{}',
-    #     client_factory=cf_offerings
-    # )
-
     with self.command_group('quantum workspace', workspace_ops) as w:
         w.command('list', 'list')
         w.command('show', 'show', validator=validate_workspace_info)   ## TODO: argument list/help
         w.command('set', 'set', validator=validate_workspace_info)
         w.command('clear', 'clear')
 
-    # with self.command_group('quantum offers', offerings_ops) as w:
-    #     w.command('list', 'list')   ## TODO: argument list/help
 
     with self.command_group('quantum target', target_ops) as w:
         w.command('list', 'list', validator=validate_workspace_info, table_transformer=transform_targets)
