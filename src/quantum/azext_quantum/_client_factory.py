@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+# pylint: disable=import-outside-toplevel,line-too-long
+
 import os
 
 def is_env(name):
@@ -34,8 +36,8 @@ def cf_quantum_mgmt(cli_ctx, *_):
 def cf_workspaces(cli_ctx, *_):
     return cf_quantum_mgmt(cli_ctx).workspaces
 
-def cf_offerings(cli_ctx, *_):
-    return cf_quantum_mgmt(cli_ctx).offerings
+def cf_providers(cli_ctx, subscription_id=None, resource_group_name=None, workspace_name=None):
+    return cf_quantum(cli_ctx, subscription_id, resource_group_name, workspace_name).providers
 
 def cf_jobs(cli_ctx, subscription_id=None, resource_group_name=None, workspace_name=None):
     return cf_quantum(cli_ctx, subscription_id, resource_group_name, workspace_name).jobs
