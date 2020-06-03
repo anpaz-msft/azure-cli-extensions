@@ -12,9 +12,9 @@ helps['quantum'] = """
     short-summary: Manage Quantum Workspaces and submit jobs to Azure Quantum Providers.
 """
 
-helps['quantum jobs list'] = """
-    type: command
-    short-summary: List the jobs of the current workspace.
+helps['quantum job'] = """
+    type: group
+    short-summary: Manage jobs for Azure Quantum.
 """
 
 # helps['quantum delete'] = """

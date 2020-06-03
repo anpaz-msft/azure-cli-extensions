@@ -113,7 +113,7 @@ def _generate_submit_args(program_args, ws, target, token, project, job_name, sh
     return args
 
 def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None,
-    job_name=None, shots=None, no_build=False):
+           job_name=None, shots=None, no_build=False):
     """
     Submits a Q# project for execution to Azure Quantum.
     """
@@ -222,7 +222,7 @@ def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wa
     return job
 
 def execute(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None,
-    job_name=None, shots=None, no_build=False):
+            job_name=None, shots=None, no_build=False):
     """
     Executes a Q# project on Azure Quantum.
 
