@@ -49,7 +49,7 @@ def list(cmd, resource_group_name=None, tag=None, location=None):
 
 def show(cmd, resource_group_name=None, workspace_name=None):
     """
-    Returns the details of the given Quantum Workspace.
+    Returns the details of the given (or current) Quantum Workspace.
     """
     client = cf_workspaces(cmd.cli_ctx)
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)

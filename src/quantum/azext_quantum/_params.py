@@ -13,13 +13,17 @@ def load_arguments(self, _):
     with self.argument_context('quantum workspace') as c:
         c.argument('workspace_name', workspace_name_type)
 
+    with self.argument_context('quantum target') as c:
+        c.argument('workspace_name', workspace_name_type)
+        c.argument('target_id', options_list=['--target-id', '-t'], help='Target id.')
+
     with self.argument_context('quantum job') as c:
         c.argument('workspace_name', workspace_name_type)
         c.argument('job_id', options_list=['--job-id', '-id'], help='Job id.')
-
-    with self.argument_context('quantum job submit') as c:
+        c.argument('target_id', options_list=['--target-id', '-t'], help='Target id.')
         c.positional('program_args', program_args)
 
     with self.argument_context('quantum execute') as c:
         c.argument('workspace_name', workspace_name_type)
+        c.argument('target_id', options_list=['--target-id', '-t'], help='Target id.')
         c.positional('program_args', program_args)
