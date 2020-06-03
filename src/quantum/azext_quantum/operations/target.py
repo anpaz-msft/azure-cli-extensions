@@ -3,7 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .._client_factory import cf_workspaces
+# pylint: disable=import-outside-toplevel,line-too-long,redefined-builtin
+
+from .._client_factory import cf_providers
+from .workspace import WorkspaceInfo
 
 class TargetInfo(object):
     def __init__(self, cmd, target_id=None):
@@ -41,8 +44,15 @@ def set(cmd, target_id=None):
         info.save(cmd)
     return info
 
+def list(cmd, resource_group_name=None, workspace_name=None):
+    """
+    Returns the list of providers in a Quantum Workspace.
+    """
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    client = cf_providers(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
+    return client.get_status()
+
 def clear(cmd):
     info = TargetInfo(cmd)
     info.clear()
     info.save(cmd)
-    return

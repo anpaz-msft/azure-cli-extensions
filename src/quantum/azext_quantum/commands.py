@@ -9,6 +9,22 @@ from collections import OrderedDict
 from azure.cli.core.commands import CliCommandType
 from ._validators import validate_workspace_info, validate_target_info, validate_workspace_and_target_info
 
+
+def transform_targets(providers):
+    def one(provider, target):
+        return OrderedDict([
+            ('Provider', provider),
+            ('Target-id', target['id']),
+            ('Status', target['currentAvailability']),
+            ('Average Queue Time', target['averageQueueTime'])
+        ])
+
+    targets = []
+    for provider in providers:
+        for target in provider['targets']:
+            targets.append(one(provider['id'], target))
+    return targets
+
 def transform_job(result):
     result = OrderedDict([
         ('Id', result['id']),
@@ -78,7 +94,7 @@ def load_command_table(self, _):
     #     w.command('list', 'list')   ## TODO: argument list/help
 
     with self.command_group('quantum target', target_ops) as w:
-        # w.command('list', 'list')
+        w.command('list', 'list', validator=validate_workspace_info, table_transformer=transform_targets)
         w.command('show', 'show', validator=validate_target_info)
         w.command('set', 'set', validator=validate_target_info)
         w.command('clear', 'clear')
