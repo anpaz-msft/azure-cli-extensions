@@ -3,6 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+# pylint: disable=import-outside-toplevel,line-too-long,redefined-builtin
+
+from knack.util import CLIError
+
 from .._client_factory import cf_workspaces
 
 class WorkspaceInfo(object):
@@ -37,16 +41,27 @@ class WorkspaceInfo(object):
 
 
 def list(cmd, resource_group_name=None, tag=None, location=None):
+    """
+    Returns the list of Quantum Workspaces available.
+    """
     from azure.cli.command_modules.resource.custom import list_resources
     return list_resources(cmd, resource_group_name=resource_group_name, resource_type="Microsoft.Quantum/Workspaces", tag=tag, location=location)
 
 def show(cmd, resource_group_name=None, workspace_name=None):
+    """
+    Returns the details of the given Quantum Workspace.
+    """
     client = cf_workspaces(cmd.cli_ctx)
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    if (not info.resource_group) or (not info.name):
+        raise CLIError("Please run 'az quantum workspace set' first to select a default Quantum Workspace.")
     ws = client.get(info.resource_group, info.name)
     return ws
 
-def set(cmd, resource_group_name=None, workspace_name=None):
+def set(cmd, workspace_name, resource_group_name=None):
+    """
+    Sets the default Quantum Workspace.
+    """
     client = cf_workspaces(cmd.cli_ctx)
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     ws = client.get(info.resource_group, info.name)
@@ -55,7 +70,9 @@ def set(cmd, resource_group_name=None, workspace_name=None):
         return ws
 
 def clear(cmd):
+    """
+    Unsets the default Quantum Workspace.
+    """
     info = WorkspaceInfo(cmd)
     info.clear()
     info.save(cmd)
-    return

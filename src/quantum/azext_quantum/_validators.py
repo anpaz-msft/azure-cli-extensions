@@ -21,7 +21,7 @@ def validate_workspace_info(cmd, namespace):
     if not ws.resource_group:
         raise ValueError("Missing resource-group argument")
     if not ws.name:
-        raise ValueError("Missing workspace name argument")
+        raise ValueError("Missing workspace-name argument")
 
 
 def validate_target_info(cmd, namespace):
