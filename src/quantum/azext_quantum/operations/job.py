@@ -7,10 +7,11 @@
 
 import logging
 
+from knack.util import CLIError
+
 from .._client_factory import cf_jobs, _get_data_credentials, base_url
 from .workspace import WorkspaceInfo
 from .target import TargetInfo
-from knack.util import CLIError
 
 logger = logging.getLogger(__name__)
 
@@ -33,19 +34,52 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
     return client.get(job_id)
 
 
-def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, no_build=False):
+def build(cmd, target_id=None, project=None):
+    """
+    Compiles a Q# program for execution to Azure Quantum.
+    """
+    target = TargetInfo(cmd, target_id)
+
+    args = ["dotnet", "build"]
+
+    args.append(f"-property:ExecutionTarget={target.target_id}")
+
+    if project:
+        args.append("--project")
+        args.append(project)
+
+    logger.debug("Building project with arguments:")
+    logger.debug(args)
+
+    import subprocess
+    result = subprocess.run(args, stdout=subprocess.PIPE, check=False)
+
+    if result.returncode == 0:
+        return {'result': 'ok'}
+
+    raise CLIError("Failed to compile program.")
+
+
+def submit(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None, 
+    job_name=None, shots=None, no_build=False):
     """
     Submits a Q# program for execution to Azure Quantum.
     """
     import os
 
+    # We first build and then call run.
+    # Can't call run directly because it fails to understand the 
+    # `ExecutionTarget` property when passed in the command line
+    if not no_build:
+        build(cmd, target_id=target_id, project=project)
+
+    logger.info("Project built successfully.")
+
     ws = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     target = TargetInfo(cmd, target_id)
     token = _get_data_credentials(cmd.cli_ctx, ws.subscription).get_token().token
 
-    args = ["dotnet", "run"]
-    if no_build:
-        args.append("--no-build")
+    args = ["dotnet", "run", "--no-build"]
 
     if project:
         args.append("--project")
@@ -66,6 +100,14 @@ def submit(cmd, program_args, resource_group_name=None, workspace_name=None, tar
     args.append("--target")
     args.append(target.target_id)
 
+    if job_name:
+        args.append("--job-name")
+        args.append(job_name)
+
+    if shots:
+        args.append("--shots")
+        args.append(shots)
+
     args.append("--output")
     args.append("Id")
 
@@ -80,14 +122,15 @@ def submit(cmd, program_args, resource_group_name=None, workspace_name=None, tar
 
     args.extend(program_args)
 
+    logger.debug("Running  project with arguments:")
     logger.debug(args)
 
     import subprocess
     result = subprocess.run(args, stdout=subprocess.PIPE, check=False)
 
     if result.returncode == 0:
-        job_id = result.stdout.decode('ascii').strip()  
-        return { 'job_id': job_id }
+        job_id = result.stdout.decode('ascii').strip()
+        return show(cmd, job_id, resource_group_name, workspace_name)
 
     raise CLIError("Failed to submit job.")
 
