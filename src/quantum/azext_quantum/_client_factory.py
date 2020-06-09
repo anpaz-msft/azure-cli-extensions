@@ -14,7 +14,7 @@ def base_url():
     if 'AZURE_QUANTUM_BASEURL' in os.environ:
         return os.environ['AZURE_QUANTUM_BASEURL']
     if is_env('canary'):
-        return "https://app-jobs-canarysouthcentralus.azurewebsites.net/"
+        return "https://dataplanefrontdoorcanary.azurefd.net/"
     return "https://app-jobscheduler-prod.azurewebsites.net/"
 
 def _get_data_credentials(cli_ctx, subscription_id=None):
