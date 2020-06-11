@@ -34,7 +34,13 @@ class QuantumScenarioTest(ScenarioTest):
         targets = self.cmd('az quantum target list -o json').get_output_in_json()
         assert len(targets) > 0
 
-    def test_submit_args(self):            
+    def test_submit_args(self):
+        # Since azure quantum is still in private preview, we require
+        # these tests to run in a specific subscription (AzureQuantum-test)
+        # if running somewhere else, just skip
+        if not is_private_preview_subscription(self):
+            return
+
         ws = WorkspaceInfo(self, TEST_RG, TEST_WORKSPACE)
         target = TargetInfo(self, 'ionq.simulator')
 

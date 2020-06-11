@@ -3,3 +3,5 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -----------------------------------------------------------------------------
+
+# To run these tests from the command line: `azdev test quantum`

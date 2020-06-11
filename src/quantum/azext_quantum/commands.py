@@ -15,7 +15,7 @@ def transform_targets(providers):
         return OrderedDict([
             ('Provider', provider),
             ('Target-id', target['id']),
-            ('Status', target['currentAvailability']),
+            ('Current Availability', target['currentAvailability']),
             ('Average Queue Time', target['averageQueueTime'])
         ])
 
@@ -28,7 +28,7 @@ def transform_targets(providers):
 def transform_job(result):
     result = OrderedDict([
         ('Id', result['id']),
-        ('State', result['status']),
+        ('Status', result['status']),
         ('Target', result['target']),
         ('Submission time', result['creationTime']),
         ('Completion time', result['endExecutionTime'])
