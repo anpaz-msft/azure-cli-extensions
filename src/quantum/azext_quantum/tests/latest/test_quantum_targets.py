@@ -9,7 +9,7 @@ import unittest
 from azure_devtools.scenario_tests import AllowLargeResponse
 from azure.cli.testsdk import (ScenarioTest, ResourceGroupPreparer)
 
-from .utils import is_private_preview_subscription, TEST_WORKSPACE, TEST_RG
+from .utils import is_private_preview_subscription, TEST_WORKSPACE, TEST_RG, TEST_SUBS
 
 TEST_DIR = os.path.abspath(os.path.join(os.path.abspath(__file__), '..'))
 
@@ -21,7 +21,7 @@ class QuantumScenarioTest(ScenarioTest):
         # these tests to run in a specific subscription (AzureQuantum-test)
         # if running somewhere else, just skip
         if not is_private_preview_subscription(self):
-            return
+            self.skipTest(f"Need to run azure quantum tests in subscription {TEST_SUBS}")
 
         # set current workspace:
         self.cmd(f'az quantum workspace set -g {TEST_RG} -w {TEST_WORKSPACE}')

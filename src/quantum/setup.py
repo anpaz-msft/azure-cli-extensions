@@ -16,7 +16,7 @@ except ImportError:
 
 # TODO: Confirm this is the right version number you want and it matches your
 # HISTORY.rst entry.
-VERSION = '0.11.2906.1'
+VERSION = '0.11.2906.2'
 
 # The full list of classifiers is available at
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -46,10 +46,8 @@ setup(
     name='quantum',
     version=VERSION,
     description='Microsoft Azure Command-Line Tools Quantum Extension',
-    # TODO: Update author and email, if applicable
-    author='Microsoft Corporation',
-    author_email='azpycli@microsoft.com',
-    # TODO: consider pointing directly to your source code instead of the generic repo
+    author='Microsoft Corporation, Quantum Team',
+    author_email='que-contacts@microsoft.com',
     url='https://github.com/Azure/azure-cli-extensions',
     long_description=README + '\n\n' + HISTORY,
     license='MIT',

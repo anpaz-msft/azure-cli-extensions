@@ -4,4 +4,6 @@
 # license information.
 # -----------------------------------------------------------------------------
 
-# To run these tests from the command line: `azdev test quantum`
+# To run these tests from the command line:
+#   az connect -s 677fc922-91d0-4bf6-9b06-4274d319a0fa
+#   azdev test quantum --live

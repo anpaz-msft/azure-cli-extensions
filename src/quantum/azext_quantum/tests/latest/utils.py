@@ -14,8 +14,4 @@ def is_private_preview_subscription(scenario):
     # tests to run in a specific subscription (AzureQuantum-test)
     # this method checks if running in such subscription:
     account = scenario.cmd('az account show -o json').get_output_in_json()
-    if account['id'] == TEST_SUBS:
-        return True
-
-    print("WARNING: Need to run these tests in subscription ", TEST_SUBS)
-    return False
+    return account['id'] == TEST_SUBS

@@ -25,7 +25,7 @@ class QuantumScenarioTest(ScenarioTest):
         # these tests to run in a specific subscription (AzureQuantum-test)
         # if running somewhere else, just skip
         if not is_private_preview_subscription(self):
-            return
+            self.skipTest(f"Need to run azure quantum tests in subscription {TEST_SUBS}")
 
         # set current workspace:
         self.cmd(f'az quantum workspace set -g {TEST_RG} -w {TEST_WORKSPACE}')
@@ -39,7 +39,7 @@ class QuantumScenarioTest(ScenarioTest):
         # these tests to run in a specific subscription (AzureQuantum-test)
         # if running somewhere else, just skip
         if not is_private_preview_subscription(self):
-            return
+            self.skipTest(f"Need to run azure quantum tests in subscription {TEST_SUBS}")
 
         ws = WorkspaceInfo(self, TEST_RG, TEST_WORKSPACE)
         target = TargetInfo(self, 'ionq.simulator')
