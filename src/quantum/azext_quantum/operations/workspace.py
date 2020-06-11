@@ -13,6 +13,10 @@ class WorkspaceInfo(object):
     def __init__(self, cmd, resource_group_name=None, workspace_name=None):
         from azure.cli.core.commands.client_factory import get_subscription_id
 
+        # Hierarchically selects the value for the given key.
+        # First tries the value provided as argument, as that represents the value from the command line
+        # then it checks if the key exists in the 'quantum' section in config, and uses that if available.
+        # finally, it checks in the 'global' section in the config.
         def select_value(key, value):
             if not value is None:
                 return value

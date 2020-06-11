@@ -19,11 +19,11 @@ def transform_targets(providers):
             ('Average Queue Time', target['averageQueueTime'])
         ])
 
-    targets = []
-    for provider in providers:
-        for target in provider['targets']:
-            targets.append(one(provider['id'], target))
-    return targets
+    return [
+        one(provider['id'], target)
+        for provider in providers
+        for target in provider['targets']
+    ]
 
 def transform_job(result):
     result = OrderedDict([
@@ -44,8 +44,8 @@ def transform_jobs(results):
 
 def transform_output(results):
     def one(key, value):
-        repeat = round(20*value)
-        barra = "\u2588"*repeat
+        repeat = round(20 * value)
+        barra = "\u2588" * repeat
         return OrderedDict([
             ('Result', key),
             ('Frequency', f"{value:10.8f}"),

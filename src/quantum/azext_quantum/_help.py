@@ -17,17 +17,17 @@ helps['quantum job'] = """
     short-summary: Manage jobs for Azure Quantum.
 """
 
-# helps['quantum delete'] = """
-#     type: command
-#     short-summary: Delete a Quantum.
-# """
+helps['quantum target'] = """
+    type: command
+    short-summary: Manage execution targets for Azure Quantum workspaces.
+"""
 
-# helps['quantum show'] = """
-#     type: command
-#     short-summary: Show details of a Quantum.
-# """
+helps['quantum job submit'] = """
+    type: command
+    short-summary: Submits a job for quantum execution on Azure Quantum.
+"""
 
-# helps['quantum update'] = """
-#     type: command
-#     short-summary: Update a Quantum.
-# """
+helps['quantum execute'] = """
+    type: command
+    short-summary: Submits a job for quantum execution on Azure Quantum, and waits for the result.
+"""

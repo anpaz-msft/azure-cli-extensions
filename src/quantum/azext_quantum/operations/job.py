@@ -107,7 +107,7 @@ def _generate_submit_args(program_args, ws, target, token, project, job_name, sh
 
     args.extend(program_args)
 
-    logger.debug("Running  project with arguments:")
+    logger.debug("Running project with arguments:")
     logger.debug(args)
 
     return args
@@ -195,11 +195,7 @@ def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wa
     import time
 
     def has_completed(job):
-        return (
-            job.status == "Succeeded" or
-            job.status == "Failed" or
-            job.status == "Cancelled"
-        )
+        return job.status in ("Succeeded", "Failed", "Cancelled")
 
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
     client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)

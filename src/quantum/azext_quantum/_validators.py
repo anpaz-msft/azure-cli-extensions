@@ -11,7 +11,9 @@ from .operations.workspace import WorkspaceInfo
 from .operations.target import TargetInfo
 
 def validate_workspace_info(cmd, namespace):
-    ### Makes sure all parameters for a workspace are available ##
+    """
+    Makes sure all parameters for a workspace are available.
+    """
     group = getattr(namespace, 'resource_group_name', None)
     name = getattr(namespace, 'workspace_name', None)
     ws = WorkspaceInfo(cmd, group, name)
@@ -25,7 +27,9 @@ def validate_workspace_info(cmd, namespace):
 
 
 def validate_target_info(cmd, namespace):
-    ### Makes sure all parameters for a target are available ##
+    """
+    Makes sure all parameters for a target are available.
+    """
     target_id = getattr(namespace, 'target_id', None)
     target = TargetInfo(cmd, target_id)
 
@@ -34,12 +38,14 @@ def validate_target_info(cmd, namespace):
 
 
 def validate_workspace_and_target_info(cmd, namespace):
-    ### Makes sure all parameters for both, a workspace and a target are available ##
+    """
+    Makes sure all parameters for both, a workspace and a target are available.
+    """
     validate_workspace_info(cmd, namespace)
     validate_target_info(cmd, namespace)
 
     # For the time being (Private Preview), we also need the AZURE_QUANTUM_STORAGE env variable populated
-    # with the Azure Storag'se connection string to use to upload the program.
+    # with the Azure Storage connection string to use to upload the program.
     if not 'AZURE_QUANTUM_STORAGE' in os.environ:
         raise ValueError(f"Please set the AZURE_QUANTUM_STORAGE environment variable with an Azure Storage's connection string.")
 
