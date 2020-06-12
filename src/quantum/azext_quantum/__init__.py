@@ -6,6 +6,8 @@
 # pylint: disable=import-outside-toplevel
 from azure.cli.core import AzCommandsLoader
 
+import azext_quantum._help  # pylint: disable=unused-import
+
 class QuantumCommandsLoader(AzCommandsLoader):
 
     def __init__(self, cli_ctx=None):

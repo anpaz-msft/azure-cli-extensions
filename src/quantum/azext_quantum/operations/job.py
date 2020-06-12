@@ -220,9 +220,7 @@ def wait(cmd, job_id, resource_group_name=None, workspace_name=None, max_poll_wa
 def execute(cmd, program_args, resource_group_name=None, workspace_name=None, target_id=None, project=None,
             job_name=None, shots=None, no_build=False):
     """
-    Executes a Q# project on Azure Quantum.
-
-    Submits a job, waits for completion and returns back a histogram with the results distribution.
+    Submits a job for quantum execution on Azure Quantum, and waits for the result.
     """
     job = submit(cmd, program_args, resource_group_name, workspace_name, target_id, project, job_name, shots, no_build)
     print("Job id:", job.id)
