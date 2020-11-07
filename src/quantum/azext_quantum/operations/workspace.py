@@ -8,6 +8,8 @@
 from knack.util import CLIError
 
 from .._client_factory import cf_workspaces
+from ..vendored_sdks.azure_mgmt_quantum.models import QuantumWorkspace
+from ..vendored_sdks.azure_mgmt_quantum.models import Provider
 
 
 class WorkspaceInfo(object):
@@ -42,6 +44,31 @@ class WorkspaceInfo(object):
         with ConfiguredDefaultSetter(cmd.cli_ctx.config, False):
             cmd.cli_ctx.config.set_value('quantum', 'group', self.resource_group)
             cmd.cli_ctx.config.set_value('quantum', 'workspace', self.name)
+
+def create(cmd, resource_group_name=None, workspace_name=None):
+    """
+    Creates a new Azure Quantum workspace.
+    """
+    print("Create attempted.")
+    client = cf_workspaces(cmd.cli_ctx)
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    if (not info.resource_group) or (not info.name):
+        raise CLIError("Please run 'az quantum workspace set' first to select a default Quantum Workspace.")
+    # Default provider
+    prov = Provider()
+    prov.provider_id = "Microsoft"
+    prov.provider_sku = "Basic"
+    # Create a Quantum Workspace object and set the required properties
+    qw = QuantumWorkspace()
+    qw.location = "West US"
+    qw.providers = [prov]
+    qw.storage_account = "/subscriptions/916dfd6d-030c-4bd9-b579-7bb6d1926e97/resourceGroups/aqua-testing-westus2/providers/Microsoft.Storage/storageAccounts/ricardoeaqd01"
+    print(qw)
+    print("Create attempted. 2")
+    client.create_and_update(info.resource_group, info.name, qw, raw=True, polling=False)
+    return qw
+
+
 
 def delete(cmd, resource_group_name=None, workspace_name=None):
     """
