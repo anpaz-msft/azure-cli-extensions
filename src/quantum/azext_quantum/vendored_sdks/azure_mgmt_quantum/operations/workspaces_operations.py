@@ -126,35 +126,12 @@ class WorkspacesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        print("A")
-
         # Construct body
         body_content = self._serialize.body(quantum_workspace, 'QuantumWorkspace')
 
-        print("B")
-
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-
-        print("Inner request:")
-        print(request)
-
-        print(url)
-        print(query_parameters)
-        print(header_parameters)
-        print(body_content)
-
-        print("C")
-
-        try:
-            response = self._client.send(request, stream=False, **operation_config)
-        except Exception as e:
-            print(e)
-            print("Exception end")
-            return
-
-        print("Inner response:")
-        print(response)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -205,10 +182,6 @@ class WorkspacesOperations(object):
             **operation_config
         )
 
-        print("Raw: ")
-        print(raw_result)
-        print("Deserialized: ")
-
         def get_long_running_output(response):
             deserialized = self._deserialize('QuantumWorkspace', response)
 
@@ -217,8 +190,6 @@ class WorkspacesOperations(object):
                 return client_raw_response
 
             return deserialized
-
-        print(get_long_running_output(raw_result))
 
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
