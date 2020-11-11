@@ -58,8 +58,8 @@ def get_basic_quantum_workspace(location, info, storage_account):
     # Allow the system to assign the workspace identity
     qw.identity = QuantumWorkspaceIdentity()
     qw.identity.type = "SystemAssigned"
-    qw.location=location
-    qw.storage_account = "/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Storage/storageAccounts/{2}".format(info.subscription, info.resource_group, storage_account)
+    qw.location = location
+    qw.storage_account = f"/subscriptions/{info.subscription}/resourceGroups/{info.resource_group}/providers/Microsoft.Storage/storageAccounts/{storage_account}"
     return qw
 
 
