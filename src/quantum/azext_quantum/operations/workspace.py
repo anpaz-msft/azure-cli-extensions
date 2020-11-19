@@ -49,8 +49,7 @@ class WorkspaceInfo(object):
 def get_basic_quantum_workspace(location, info, storage_account):
     qw = QuantumWorkspace()
     # Use a default provider 
-    # Replace this with user specified providers as part of task:
-    # https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/16184
+    # Replace this with user specified providers as part of task 16184.
     prov = Provider()
     prov.provider_id = "Microsoft"
     prov.provider_sku = "Basic"
