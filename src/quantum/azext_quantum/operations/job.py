@@ -148,8 +148,8 @@ def _parse_blob_url(url):
     o = urlparse(url)
 
     account_name = o.netloc.split('.')[0]
-    container = o.path.split('/')[-2]
-    blob = o.path.split('/')[-1]
+    container = o.path.split('/')[-1]
+    blob = "output.json"
     sas_token = o.query
 
     return {
@@ -177,13 +177,13 @@ def output(cmd, job_id, resource_group_name=None, workspace_name=None):
         logger.debug("Downloading job results blob into %s", path)
 
         info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
-        client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
-        job = client.get(job_id)
+        client = cf_jobs(cmd.cli_ctx)
+        job = client.get(info.resource_group, info.name, job_id)
 
-        if job.status != "Succeeded":
-            return f"Job status: {job.status}. Output only available if Succeeded."
+        if job.status != "Completed":
+            return f"Job status: {job.status}. Output only available if Completed."
 
-        args = _parse_blob_url(job.output_data_uri)
+        args = _parse_blob_url(job.data_location[0].source.blob_endpoint)
         blob_service = blob_data_service_factory(cmd.cli_ctx, args)
         blob_service.get_blob_to_path(args['container'], args['blob'], path)
 
