@@ -80,6 +80,7 @@ def load_command_table(self, _):
     workspace_ops = CliCommandType(operations_tmpl='azext_quantum.operations.workspace#{}')
     job_ops = CliCommandType(operations_tmpl='azext_quantum.operations.job#{}')
     target_ops = CliCommandType(operations_tmpl='azext_quantum.operations.target#{}')
+    notebook_ops = CliCommandType(operations_tmpl='azext_quantum.operations.notebook#{}')
 
     with self.command_group('quantum workspace', workspace_ops) as w:
         w.command('list', 'list')
@@ -99,6 +100,11 @@ def load_command_table(self, _):
         j.command('submit', 'submit', validator=validate_workspace_and_target_info, table_transformer=transform_job)
         j.command('wait', 'wait', validator=validate_workspace_info, table_transformer=transform_job)
         j.command('output', 'output', validator=validate_workspace_info, table_transformer=transform_output)
+        
+    with self.command_group('quantum notebook', notebook_ops) as j:
+        j.command('list', 'list', validator=validate_workspace_info)
+        j.command('launch', 'launch', validator=validate_workspace_info)
+        j.command('create', 'create', validator=validate_workspace_info)
 
     with self.command_group('quantum', job_ops, is_preview=True) as q:
         q.command('execute', 'execute', validator=validate_workspace_and_target_info, table_transformer=transform_output)

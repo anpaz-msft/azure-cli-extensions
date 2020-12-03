@@ -26,7 +26,7 @@ def load_arguments(self, _):
 
     with self.argument_context('quantum job') as c:
         c.argument('workspace_name', workspace_name_type)
-        c.argument('job_id', options_list=['--job-id', '-id'], help='Job id.')
+        c.argument('job_id', options_list=['--job-name', '-n'], help='Job name.')
         c.argument('target_id', target_id_type)
         c.argument('project', project_type)
         c.argument('job_name', job_name_type)
@@ -46,3 +46,7 @@ def load_arguments(self, _):
         c.argument('storage', storage_type)
         c.argument('no_build', no_build_type)
         c.positional('program_args', program_args_type)
+
+    with self.argument_context('quantum notebook') as c:
+        c.argument('workspace_name', workspace_name_type)
+        c.argument('job_id', options_list=['--job-name', '-n'], help='Job name.')
