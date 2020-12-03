@@ -39,6 +39,11 @@ def cf_quantum_mgmt(cli_ctx, *_):
     return get_mgmt_service_client(cli_ctx, QuantumManagementClient)
 
 
+def cf_aisc(cli_ctx, *_):
+    from azure.cli.core.commands.client_factory import get_mgmt_service_client
+    from .vendored_sdks.aisc import AISupercomputerManagementClient
+    return get_mgmt_service_client(cli_ctx, AISupercomputerManagementClient)
+
 def cf_workspaces(cli_ctx, *_):
     return cf_quantum_mgmt(cli_ctx).workspaces
 
@@ -47,5 +52,5 @@ def cf_providers(cli_ctx, subscription_id=None, resource_group_name=None, worksp
     return cf_quantum(cli_ctx, subscription_id, resource_group_name, workspace_name).providers
 
 
-def cf_jobs(cli_ctx, subscription_id=None, resource_group_name=None, workspace_name=None):
-    return cf_quantum(cli_ctx, subscription_id, resource_group_name, workspace_name).jobs
+def cf_jobs(cli_ctx, subscription_id=None):
+    return cf_aisc(cli_ctx, subscription_id).job

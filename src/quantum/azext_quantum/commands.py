@@ -29,18 +29,18 @@ def transform_targets(providers):
 def transform_job(result):
     result = OrderedDict([
         ('Name', result['name']),
-        ('Id', result['id']),
+        # ('Id', result['id']),
         ('Status', result['status']),
-        ('Target', result['target']),
-        ('Submission time', result['creationTime']),
-        ('Completion time', result['endExecutionTime'])
+        # ('Target', result['target']),
+        ('Submission time', result['systemData']['createdAt']),
+        # ('Completion time', result['endExecutionTime'])
     ])
     return result
 
 
 def transform_jobs(results):
     def creation(job):
-        return job['creationTime']
+        return job['systemData']['createdAt']
 
     return [transform_job(job) for job in sorted(results, key=creation, reverse=True)]
 

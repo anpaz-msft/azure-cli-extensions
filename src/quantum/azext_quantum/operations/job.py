@@ -21,8 +21,8 @@ def list(cmd, resource_group_name=None, workspace_name=None):
     Get the list of jobs in a Quantum Workspace.
     """
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
-    client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
-    return client.list()
+    client = cf_jobs(cmd.cli_ctx)
+    return client.list_by_account(resource_group_name=info.resource_group, account_name=info.name)
 
 
 def show(cmd, job_id, resource_group_name=None, workspace_name=None):
@@ -30,8 +30,8 @@ def show(cmd, job_id, resource_group_name=None, workspace_name=None):
     Get the job's status and details.
     """
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
-    client = cf_jobs(cmd.cli_ctx, info.subscription, info.resource_group, info.name)
-    return client.get(job_id)
+    client = cf_jobs(cmd.cli_ctx)
+    return client.get(info.resource_group, info.name, job_id)
 
 
 def build(cmd, target_id=None, project=None):
