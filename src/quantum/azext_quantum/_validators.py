@@ -15,6 +15,7 @@ def validate_workspace_info(cmd, namespace):
     """
     group = getattr(namespace, 'resource_group_name', None)
     name = getattr(namespace, 'workspace_name', None)
+    location = getattr(namespace, 'location', None)
     ws = WorkspaceInfo(cmd, group, name)
 
     if not ws.subscription:
@@ -23,6 +24,8 @@ def validate_workspace_info(cmd, namespace):
         raise ValueError("Missing resource-group argument")
     if not ws.name:
         raise ValueError("Missing workspace-name argument")
+    if not ws.location:
+        raise ValueError("Missing location argument")
 
 
 def validate_target_info(cmd, namespace):
