@@ -107,12 +107,12 @@ def list(cmd, resource_group_name=None, tag=None, location=None):
     return list_resources(cmd, resource_group_name=resource_group_name, resource_type="Microsoft.Quantum/Workspaces", tag=tag, location=location)
 
 
-def show(cmd, resource_group_name=None, workspace_name=None):
+def show(cmd, resource_group_name=None, workspace_name=None, location=None):
     """
     Get the details of the given (or current) Azure Quantum workspace.
     """
     client = cf_workspaces(cmd.cli_ctx)
-    info = WorkspaceInfo(cmd, resource_group_name, workspace_name)
+    info = WorkspaceInfo(cmd, resource_group_name, workspace_name, location)
     if (not info.resource_group) or (not info.name):
         raise CLIError("Please run 'az quantum workspace set' first to select a default Quantum Workspace.")
     ws = client.get(info.resource_group, info.name)

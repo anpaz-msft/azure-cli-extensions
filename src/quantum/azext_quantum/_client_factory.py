@@ -6,15 +6,19 @@
 # pylint: disable=line-too-long
 
 import os
+from ._location_helper import normalize_location
 
 
 def is_env(name):
     return 'AZURE_QUANTUM_ENV' in os.environ and os.environ['AZURE_QUANTUM_ENV'] == name
 
 
-def base_url():
+def base_url(location):
+    normalized_location = normalize_location(location)
     if 'AZURE_QUANTUM_BASEURL' in os.environ:
         return os.environ['AZURE_QUANTUM_BASEURL']
+    if 'TEST_OVERRIDE' in os.environ:
+        return f"https://{normalized_location}.quantum-test.azure.com/"
     if is_env('canary'):
         return "https://app-jobs-canarysouthcentralus.azurewebsites.net/"
     return "https://app-jobscheduler-prod.azurewebsites.net/"
