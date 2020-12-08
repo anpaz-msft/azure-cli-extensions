@@ -15,7 +15,6 @@ def normalize_location(raw_location):
     if (not raw_location):
         return DEFAULT_WORKSPACE_LOCATION
     location = re.sub("[^A-Za-z0-9]","",raw_location).lower()
-    if (location == ""):
+    if not location:
         return DEFAULT_WORKSPACE_LOCATION
     return location
-
