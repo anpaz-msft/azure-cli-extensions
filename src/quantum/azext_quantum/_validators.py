@@ -35,7 +35,7 @@ def validate_workspace_info(cmd, namespace):
 
 def validate_workspace_info_no_location(cmd, namespace):
     """
-    Makes sure all parameters for a workspace are available including location.
+    Makes sure all parameters for a workspace are available, not including location.
     """
     validate_workspace_internal(cmd, namespace, False)
 
