@@ -63,7 +63,7 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://app-jobscheduler-prod.azurewebsites.net/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aqua-provider-validator/providers/Microsoft.Quantum/workspaces/validator-workspace-westus/providerStatus
+    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aqua-provider-validator/providers/Microsoft.Quantum/workspaces/validator-workspace-westus/providerStatus
   response:
     body:
       string: '{"value":[{"id":"Microsoft","currentAvailability":"Available","targets":[{"id":"p2","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"p3","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"s2","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"s3","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"a_s","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"a_p","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.paralleltempering-parameterfree.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.paralleltempering.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.simulatedannealing-parameterfree.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.simulatedannealing.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.paralleltempering.fpga","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.simulatedannealing.fpga","currentAvailability":"Available","averageQueueTime":0,"statusPage":null}]}],"nextLink":null}'
@@ -79,7 +79,7 @@ interactions:
       server:
       - Microsoft-IIS/10.0
       set-cookie:
-      - ARRAffinity=08e31a4953421e4acc8f85a9de4c15a37fb2c04b2d4bea64f09dfa61db9f7085;Path=/;HttpOnly;Domain=app-jobscheduler-prod.azurewebsites.net
+      - ARRAffinity=08e31a4953421e4acc8f85a9de4c15a37fb2c04b2d4bea64f09dfa61db9f7085;Path=/;HttpOnly;Domain=westus.quantum.azure.com
       strict-transport-security:
       - max-age=2592000
       vary:
@@ -104,7 +104,7 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://app-jobscheduler-prod.azurewebsites.net/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aqua-provider-validator/providers/Microsoft.Quantum/workspaces/validator-workspace-westus/providerStatus
+    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/aqua-provider-validator/providers/Microsoft.Quantum/workspaces/validator-workspace-westus/providerStatus
   response:
     body:
       string: '{"value":[{"id":"Microsoft","currentAvailability":"Available","targets":[{"id":"p2","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"p3","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"s2","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"s3","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"a_s","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"a_p","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.paralleltempering-parameterfree.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.paralleltempering.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.simulatedannealing-parameterfree.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.simulatedannealing.cpu","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.paralleltempering.fpga","currentAvailability":"Available","averageQueueTime":0,"statusPage":null},{"id":"microsoft.simulatedannealing.fpga","currentAvailability":"Available","averageQueueTime":0,"statusPage":null}]}],"nextLink":null}'
@@ -120,7 +120,7 @@ interactions:
       server:
       - Microsoft-IIS/10.0
       set-cookie:
-      - ARRAffinity=08e31a4953421e4acc8f85a9de4c15a37fb2c04b2d4bea64f09dfa61db9f7085;Path=/;HttpOnly;Domain=app-jobscheduler-prod.azurewebsites.net
+      - ARRAffinity=08e31a4953421e4acc8f85a9de4c15a37fb2c04b2d4bea64f09dfa61db9f7085;Path=/;HttpOnly;Domain=westus.quantum.azure.com
       strict-transport-security:
       - max-age=2592000
       vary:
