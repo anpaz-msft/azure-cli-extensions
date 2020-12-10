@@ -24,7 +24,7 @@ class QuantumScenarioTest(ScenarioTest):
             self.skipTest(f"Need to run azure quantum tests in subscription {TEST_SUBS}")
 
         # set current workspace:
-        self.cmd(f'az quantum workspace set -g {TEST_RG} -w {TEST_WORKSPACE}')
+        self.cmd(f'az quantum workspace set -g {TEST_RG} -w {TEST_WORKSPACE} -l {TEST_WORKSPACE_LOCATION}')
 
         # clear current target
         self.cmd(f'az quantum target clear')

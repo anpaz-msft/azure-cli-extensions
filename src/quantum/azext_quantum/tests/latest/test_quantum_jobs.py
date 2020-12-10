@@ -9,7 +9,7 @@ import unittest
 from azure_devtools.scenario_tests import AllowLargeResponse
 from azure.cli.testsdk import (ScenarioTest, ResourceGroupPreparer)
 
-from .utils import is_private_preview_subscription, TEST_WORKSPACE, TEST_RG, TEST_SUBS
+from .utils import is_private_preview_subscription, TEST_WORKSPACE, TEST_RG, TEST_WORKSPACE_LOCATION, TEST_SUBS
 from ..._client_factory import _get_data_credentials
 from ...operations.workspace import WorkspaceInfo
 from ...operations.target import TargetInfo
@@ -41,7 +41,7 @@ class QuantumScenarioTest(ScenarioTest):
         if not is_private_preview_subscription(self):
             self.skipTest(f"Need to run azure quantum tests in subscription {TEST_SUBS}")
 
-        ws = WorkspaceInfo(self, TEST_RG, TEST_WORKSPACE)
+        ws = WorkspaceInfo(self, TEST_RG, TEST_WORKSPACE, TEST_WORKSPACE_LOCATION)
         target = TargetInfo(self, 'ionq.simulator')
 
         token = _get_data_credentials(self.cli_ctx, TEST_SUBS).get_token().token
