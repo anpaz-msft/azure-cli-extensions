@@ -9,7 +9,7 @@ import unittest
 from azure_devtools.scenario_tests import AllowLargeResponse
 from azure.cli.testsdk import (ScenarioTest, ResourceGroupPreparer)
 
-from .utils import is_private_preview_subscription, TEST_WORKSPACE, TEST_RG, TEST_SUBS, TEST_WORKSPACE_LOCATION
+from .utils import is_private_preview_subscription, TEST_WORKSPACE, TEST_RG, TEST_SUBS, TEST_WORKSPACE_CREATE_DELETE, TEST_WORKSPACE_LOCATION
 
 TEST_DIR = os.path.abspath(os.path.join(os.path.abspath(__file__), '..'))
 
@@ -53,7 +53,7 @@ class QuantumScenarioTest(ScenarioTest):
         ])
 
         # delete
-        self.cmd(f'az quantum workspace delete -g {TEST_RG} -w {TEST_WORKSPACE_CREATE_DELETE} -o json'), checks=[
+        self.cmd(f'az quantum workspace delete -g {TEST_RG} -w {TEST_WORKSPACE_CREATE_DELETE} -o json', checks=[
             self.check("name", TEST_WORKSPACE_CREATE_DELETE),
             self.check("provisioningState", "Deleting")
         ])
