@@ -106,7 +106,7 @@ def _generate_submit_args(program_args, ws, target, token, project, job_name, sh
     args.append(token)
 
     args.append("--base-uri")
-    args.append(base_url(location))
+    args.append(base_url(ws.location))
 
     args.extend(program_args)
 

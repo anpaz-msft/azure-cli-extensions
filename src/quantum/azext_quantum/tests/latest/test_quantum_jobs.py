@@ -20,7 +20,7 @@ TEST_DIR = os.path.abspath(os.path.join(os.path.abspath(__file__), '..'))
 
 class QuantumScenarioTest(ScenarioTest):
 
-    def test_targets(self):
+    def test_jobs(self):
         # Since azure quantum is still in private preview, we require
         # these tests to run in a specific subscription (AzureQuantum-test)
         # if running somewhere else, just skip
@@ -28,7 +28,7 @@ class QuantumScenarioTest(ScenarioTest):
             self.skipTest(f"Need to run azure quantum tests in subscription {TEST_SUBS}")
 
         # set current workspace:
-        self.cmd(f'az quantum workspace set -g {TEST_RG} -w {TEST_WORKSPACE}')
+        self.cmd(f'az quantum workspace set -g {TEST_RG} -w {TEST_WORKSPACE} -l {TEST_WORKSPACE_LOCATION}')
 
         # list
         targets = self.cmd('az quantum target list -o json').get_output_in_json()
