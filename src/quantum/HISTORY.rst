@@ -14,7 +14,7 @@ Release History
 * Note: Setting providers from the CLI is not supported.
 * Aligned to QDK 0.13.20111004.
 
-0.14.2012.701
+0.14.2012.1501
 ++++++
 * Updating multi-region in data plane REST API
 * Aligned to QDK 0.14.2011120240.

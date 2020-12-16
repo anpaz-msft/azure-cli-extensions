@@ -37,7 +37,7 @@ class WorkspaceInfo(object):
         self.location = select_value('location', location)
 
         # Finally, if a location is not specified, resort to the default.
-        if self.location is None:
+        if self.location is None or self.location == "":
             self.location = DEFAULT_WORKSPACE_LOCATION
 
     def clear(self):
