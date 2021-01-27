@@ -123,7 +123,7 @@ def create(cmd, resource_group_name=None, workspace_name=None, location=None, st
     info = WorkspaceInfo(cmd, resource_group_name, workspace_name, location)
     if (not info.resource_group):
         raise CLIError("Please run 'az quantum workspace set' first to select a default resource group.")
-    _show_tip(f"Workspace {info.name} will be created with the Basic SKU of the Microsoft provider.")
+    _show_tip(f"Workspace {info.name} will be created with the Basic SKU of the Microsoft QIO optimization provider.")
     _show_tip("Please go to the Azure portal https://portal.azure.com/ to configure additional providers.")
     quantum_workspace = _get_basic_quantum_workspace(location, info, storage_account)
     poller = client.create_or_update(info.resource_group, info.name, quantum_workspace, polling=False)
